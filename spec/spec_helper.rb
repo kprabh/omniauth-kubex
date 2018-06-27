@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "omniauth/barong"
+require "omniauth/kubex"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
