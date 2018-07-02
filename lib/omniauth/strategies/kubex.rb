@@ -72,7 +72,7 @@ module OmniAuth
       end
 
       def raw_info
-        if ENV.fetch('BARONG_DOMAIN').empty? || (ENV.fetch('BARONG_DOMAIN') == ENV.fetch('URL_HOST'))
+        if ENV['BARONG_DOMAIN'].blank? || (ENV.fetch('BARONG_DOMAIN') == ENV.fetch('URL_HOST'))
           @raw_info ||= env['warden'].authenticate(scope: :identity_account)
         end
         @raw_info ||= access_token.get(raw_info_url).parsed
@@ -88,7 +88,7 @@ module OmniAuth
 
       protected
       def build_access_token
-        if ENV.fetch('BARONG_DOMAIN').empty? || (ENV.fetch('BARONG_DOMAIN') == ENV.fetch('URL_HOST'))
+        if ENV['BARONG_DOMAIN'].blank? || (ENV.fetch('BARONG_DOMAIN') == ENV.fetch('URL_HOST'))
           out_par = {}
           aut_var = ::OAuth2::Authenticator.encode_basic_auth options.client_id, options.client_secret
           opt_has = {:grant_type => 'authorization_code', :code =>  request.params["code"], :redirect_uri => callback_url,:symbolize_keys => true}
