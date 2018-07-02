@@ -72,7 +72,10 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info ||= env['warden'].authenticate(scope: :identity_account)
+        if ENV.fetch('BARONG_DOMAIN').empty? || (ENV.fetch('BARONG_DOMAIN') == ENV.fetch('URL_HOST'))
+          @raw_info ||= env['warden'].authenticate(scope: :identity_account)
+        end
+        @raw_info ||= access_token.get(raw_info_url).parsed
       end
 
       def raw_info_url
@@ -85,14 +88,18 @@ module OmniAuth
 
       protected
       def build_access_token
-        out_par = {}
-        aut_var = ::OAuth2::Authenticator.encode_basic_auth options.client_id, options.client_secret
-        opt_has = {:grant_type => 'authorization_code', :code =>  request.params["code"], :redirect_uri => callback_url,:symbolize_keys => true}
-        @req_obj = Cont.new opt_has, aut_var
-        @door_server ||= Doorkeeper::Server.new @req_obj
-        @tok_strategy ||= Doorkeeper::Request::AuthorizationCode.new @door_server
-        @authorize_response ||= @tok_strategy.authorize
-        build_access_token_client@authorize_response, opt_has,::OAuth2::AccessToken
+        if ENV.fetch('BARONG_DOMAIN').empty? || (ENV.fetch('BARONG_DOMAIN') == ENV.fetch('URL_HOST'))
+          out_par = {}
+          aut_var = ::OAuth2::Authenticator.encode_basic_auth options.client_id, options.client_secret
+          opt_has = {:grant_type => 'authorization_code', :code =>  request.params["code"], :redirect_uri => callback_url,:symbolize_keys => true}
+          @req_obj = Cont.new opt_has, aut_var
+          @door_server ||= Doorkeeper::Server.new @req_obj
+          @tok_strategy ||= Doorkeeper::Request::AuthorizationCode.new @door_server
+          @authorize_response ||= @tok_strategy.authorize
+          build_access_token_client@authorize_response, opt_has,::OAuth2::AccessToken
+        else
+          super
+        end
       end
       private
       def scheme
