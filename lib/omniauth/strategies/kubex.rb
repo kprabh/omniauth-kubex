@@ -74,6 +74,8 @@ module OmniAuth
       def raw_info
         if ENV['BARONG_DOMAIN'].blank? || (ENV.fetch('BARONG_DOMAIN') == ENV.fetch('URL_HOST'))
           @raw_info ||= env['warden'].authenticate(scope: :identity_account)
+          puts "hi"
+          puts @raw_info
         end
         @raw_info ||= access_token.get(raw_info_url).parsed
       end
