@@ -76,8 +76,9 @@ module OmniAuth
           @raw_info ||= env['warden'].authenticate(scope: :identity_account)
           puts "hi"
           puts @raw_info
+        else
+          @raw_info ||= access_token.get(raw_info_url).parsed
         end
-        @raw_info ||= access_token.get(raw_info_url).parsed
       end
 
       def raw_info_url
